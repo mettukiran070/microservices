@@ -1,4 +1,5 @@
-# https://medium.com/@hamzaak/dockerize-mysql-with-docker-compose-4f1f789296e9
+# mysql: https://medium.com/@hamzaak/dockerize-mysql-with-docker-compose-4f1f789296e9
+# elk: https://www.bogotobogo.com/DevOps/Docker/Docker_ELK_7_6_Elastic_Stack_Docker_Compose.php
 
 version: "3.8"
 services:
