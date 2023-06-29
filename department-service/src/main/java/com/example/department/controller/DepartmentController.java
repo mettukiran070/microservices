@@ -32,7 +32,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/departments/{id}")
-    public ResponseEntity<Department> getById(Integer id) {
+    public ResponseEntity<Department> getById(Long id) {
         departmentService.getById(id);
         return null;
     }
@@ -44,7 +44,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/departments/{id}")
-    public ResponseEntity deleteById(Integer id) {
+    public ResponseEntity deleteById(Long id) {
         departmentService.delete(id);
         return null;
     }

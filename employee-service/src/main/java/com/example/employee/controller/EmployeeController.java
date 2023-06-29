@@ -32,7 +32,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees/{id}")
-    public ResponseEntity<Employee> getById(Integer id) {
+    public ResponseEntity<Employee> getById(Long id) {
         employeeService.getById(id);
         return null;
     }
@@ -44,7 +44,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/employees/{id}")
-    public ResponseEntity delete(Integer id) {
+    public ResponseEntity delete(Long id) {
         employeeService.delete(id);
         return null;
     }

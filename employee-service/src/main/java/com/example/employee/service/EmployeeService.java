@@ -1,11 +1,15 @@
 package com.example.employee.service;
 
 import com.example.employee.dto.Employee;
+import com.example.employee.exceptions.EmployeeNotFoundException;
 import com.example.employee.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,22 +22,49 @@ public class EmployeeService {
     }
 
     public Employee save(Employee employee) {
-        return null;
+        com.example.employee.models.Employee employeeObj = convertDtoToEntity(employee);
+        com.example.employee.models.Employee savedEmployee = employeeRepository.save(employeeObj);
+        return convertEntityToDto(savedEmployee);
     }
 
     public List<Employee> list() {
-        return null;
+        return employeeRepository.findAll()
+                .stream()
+                .map(employee -> convertEntityToDto(employee))
+                .collect(Collectors.toList());
     }
 
-    public Employee getById(Integer id) {
-        return null;
+    public Employee getById(Long id) {
+        return employeeRepository.findById(id)
+                .map(employee -> convertEntityToDto(employee))
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee Not Found with "+ id));
     }
 
     public Employee update(Employee employee) {
-        return null;
+        return save(employee);
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
+        employeeRepository.deleteById(id);
+    }
 
+    private com.example.employee.models.Employee convertDtoToEntity(Employee employee) {
+        return com.example.employee.models.Employee.builder()
+                .name(employee.name())
+                .dateOfBirth(employee.dateOfBirth())
+                .location(employee.location())
+                .departmentNumber(employee.departmentNumber())
+                .createdAt(new Date())
+                .build();
+    }
+
+    private Employee convertEntityToDto(com.example.employee.models.Employee employee) {
+        return new Employee(
+                Optional.ofNullable(employee.getId()),
+                employee.getName(), employee.getDateOfBirth(),
+                employee.getLocation(),
+                employee.getDepartmentNumber(),
+                employee.getCreatedAt()
+        );
     }
 }
