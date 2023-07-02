@@ -3,6 +3,7 @@ package com.example.department.controller;
 import com.example.department.dto.Department;
 import com.example.department.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,31 +22,33 @@ public class DepartmentController {
 
     @PostMapping("/departments")
     public ResponseEntity<Department> save(@RequestBody Department department) {
-        departmentService.save(department);
-        return null;
+        Department response = departmentService.save(department);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/departments")
     public ResponseEntity<List<Department>> list() {
-        departmentService.list();
-        return null;
+        List<Department> response = departmentService.list();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/departments/{id}")
-    public ResponseEntity<Department> getById(Long id) {
-        departmentService.getById(id);
-        return null;
+    public ResponseEntity<Department> getById(@PathVariable(name = "id", required = true) Long id) {
+        Department response = departmentService.getById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/departments")
     public ResponseEntity<Department> update(@RequestBody Department department) {
-        departmentService.update(department);
-        return null;
+        departmentService.getById(department.id());
+        Department response = departmentService.update(department);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/departments/{id}")
-    public ResponseEntity deleteById(Long id) {
+    public ResponseEntity deleteById(@PathVariable(name = "id", required = true) Long id) {
+        departmentService.getById(id);
         departmentService.delete(id);
-        return null;
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

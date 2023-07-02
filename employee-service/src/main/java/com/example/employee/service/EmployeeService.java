@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +36,7 @@ public class EmployeeService {
     public Employee getById(Long id) {
         return employeeRepository.findById(id)
                 .map(employee -> convertEntityToDto(employee))
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee Not Found with "+ id));
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee Not Found with " + id));
     }
 
     public Employee update(Employee employee) {
@@ -49,18 +48,21 @@ public class EmployeeService {
     }
 
     private com.example.employee.models.Employee convertDtoToEntity(Employee employee) {
-        return com.example.employee.models.Employee.builder()
+        com.example.employee.models.Employee.EmployeeBuilder builder = com.example.employee.models.Employee.builder()
                 .name(employee.name())
                 .dateOfBirth(employee.dateOfBirth())
                 .location(employee.location())
                 .departmentNumber(employee.departmentNumber())
-                .createdAt(new Date())
-                .build();
+                .createdAt(new Date());
+        if (employee.id() != null) {
+            builder.id(employee.id()).createdAt(employee.createdAt());
+        }
+        return builder.build();
     }
 
     private Employee convertEntityToDto(com.example.employee.models.Employee employee) {
         return new Employee(
-                Optional.ofNullable(employee.getId()),
+                employee.getId(),
                 employee.getName(), employee.getDateOfBirth(),
                 employee.getLocation(),
                 employee.getDepartmentNumber(),

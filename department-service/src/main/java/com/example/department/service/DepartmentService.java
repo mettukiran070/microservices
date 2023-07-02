@@ -48,17 +48,20 @@ public class DepartmentService {
     }
 
     private com.example.department.models.Department convertDtoToEntity(Department department) {
-        return com.example.department.models.Department.builder()
+        com.example.department.models.Department.DepartmentBuilder builder = com.example.department.models.Department.builder()
                 .name(department.name())
                 .email(department.email())
                 .phoneNumber(department.phoneNumber())
-                .createdAt(new Date())
-                .build();
+                .createdAt(new Date());
+        if (department.id() != null) {
+            builder.id(department.id()).createdAt(department.createdAt());
+        }
+        return builder.build();
     }
 
     private Department convertEntityToDto(com.example.department.models.Department department) {
         return new Department(
-                Optional.ofNullable(department.getId()),
+                department.getId(),
                 department.getName(),
                 department.getEmail(),
                 department.getPhoneNumber(),
