@@ -4,6 +4,7 @@ import com.example.department.dto.Department;
 import com.example.department.exceptions.DepartmentNotFoundException;
 import com.example.department.repository.DepartmentRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,8 +27,8 @@ public class DepartmentService {
         return convertEntityToDto(savedDepartment);
     }
 
-    public List<Department> list() {
-        return departmentRepository.findAll()
+    public List<Department> list(Pageable page) {
+        return departmentRepository.findAll(page)
                 .stream()
                 .map(department -> convertEntityToDto(department))
                 .collect(Collectors.toList());

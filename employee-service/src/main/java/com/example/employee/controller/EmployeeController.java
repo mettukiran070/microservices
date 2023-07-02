@@ -3,6 +3,7 @@ package com.example.employee.controller;
 import com.example.employee.dto.Employee;
 import com.example.employee.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> list() {
-        List<Employee> response = employeeService.list();
+    public ResponseEntity<List<Employee>> list(Pageable page) {
+        List<Employee> response = employeeService.list(page);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

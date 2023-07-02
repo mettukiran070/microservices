@@ -3,6 +3,7 @@ package com.example.department.controller;
 import com.example.department.dto.Department;
 import com.example.department.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,8 @@ public class DepartmentController {
     }
 
     @GetMapping("/departments")
-    public ResponseEntity<List<Department>> list() {
-        List<Department> response = departmentService.list();
+    public ResponseEntity<List<Department>> list(Pageable page) {
+        List<Department> response = departmentService.list(page);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

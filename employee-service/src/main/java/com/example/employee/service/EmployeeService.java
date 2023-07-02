@@ -4,6 +4,7 @@ import com.example.employee.dto.Employee;
 import com.example.employee.exceptions.EmployeeNotFoundException;
 import com.example.employee.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,8 +27,8 @@ public class EmployeeService {
         return convertEntityToDto(savedEmployee);
     }
 
-    public List<Employee> list() {
-        return employeeRepository.findAll()
+    public List<Employee> list(Pageable page) {
+        return employeeRepository.findAll(page)
                 .stream()
                 .map(employee -> convertEntityToDto(employee))
                 .collect(Collectors.toList());
