@@ -1,5 +1,6 @@
 # mysql: https://medium.com/@hamzaak/dockerize-mysql-with-docker-compose-4f1f789296e9
 # elk: https://www.bogotobogo.com/DevOps/Docker/Docker_ELK_7_6_Elastic_Stack_Docker_Compose.php
+# promotheus & grafanna : https://github.com/weder96/SpringBootActuatorPrometheus.git
 
 version: "3.8"
 services:
@@ -43,8 +44,30 @@ services:
   #     - 5601:5601
   #   depends_on:
   #     - elasticsearch
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   volumes:
+  #     - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus_data:/prometheus
+  #   networks:
+  #     - aw-network
+  #   ports:
+  #     - 9090:9090
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - aw-network
 volumes:
   mysql-vol:
     driver: local
   # esdata:
   #   driver: local
+  # prometheus_data:
+  #   driver: local
+  # grafana_data:
+  #   driver: local
+# networks:
+#   aw-network:
+#     driver: bridge
