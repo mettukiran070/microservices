@@ -54,7 +54,7 @@ public class EmployeeService {
                 .dateOfBirth(employee.dateOfBirth())
                 .location(employee.location())
                 .departmentNumber(employee.departmentNumber())
-                .createdAt(new Date());
+                .createdAt(Date::new);
         if (employee.id() != null) {
             builder.id(employee.id()).createdAt(employee.createdAt());
         }

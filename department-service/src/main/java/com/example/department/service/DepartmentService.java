@@ -53,7 +53,7 @@ public class DepartmentService {
                 .name(department.name())
                 .email(department.email())
                 .phoneNumber(department.phoneNumber())
-                .createdAt(new Date());
+                .createdAt(Date::new);
         if (department.id() != null) {
             builder.id(department.id()).createdAt(department.createdAt());
         }
