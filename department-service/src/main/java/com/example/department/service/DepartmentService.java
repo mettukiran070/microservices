@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +52,7 @@ public class DepartmentService {
                 .name(department.name())
                 .email(department.email())
                 .phoneNumber(department.phoneNumber())
-                .createdAt(Date::new);
+                .createdAt(new Date());
         if (department.id() != null) {
             builder.id(department.id()).createdAt(department.createdAt());
         }
