@@ -16,3 +16,17 @@ spring:
       ddl-auto: update
     show-sql: false # Display the sql queries in the console
 
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: ["health", "prometheus", "metrics"]
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true1
+    prometheus:
+      enabled: true
+
