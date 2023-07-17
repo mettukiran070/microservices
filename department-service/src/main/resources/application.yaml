@@ -6,7 +6,7 @@ spring:
     name: department-service
 
   datasource:
-    url: jdbc:mysql://localhost:3306/test
+    url: jdbc:mysql://mysql:3306/test
     username: mysqluser
     password: mysqlpass
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -26,7 +26,7 @@ management:
     health:
       show-details: always
     metrics:
-      enabled: true1
+      enabled: true
     prometheus:
       enabled: true
 

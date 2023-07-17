@@ -18,8 +18,10 @@ services:
       - '3306'
     volumes:
       - mysql-vol:/var/lib/mysql
+    networks:
+      - mysql-network
 
-#  elasticsearch:
+  #  elasticsearch:
 #     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
 #     container_name: elasticsearch
 #     environment:
@@ -53,6 +55,25 @@ services:
 #       - logstash
 #     networks:
 #       - elk-network
+
+  department-service:
+    container_name: department-service
+    image: department-service:latest
+    pull_policy: never
+    depends_on:
+      - mysql
+    command:
+      - "java"
+      - "-jar"
+      - "/app.jar"
+      - "--spring.datasource.url=jdbc:mysql://mysql:3306/test"
+    ports:
+      - 8080:8080
+    networks:
+      - pg-network
+      - mysql-network
+
+
   prometheus:
      image: prom/prometheus:latest
      container_name: prometheus
@@ -63,6 +84,7 @@ services:
        - pg-network
      ports:
        - 9090:9090
+
   grafana:
      image: grafana/grafana:latest
      container_name: grafana
@@ -83,4 +105,6 @@ networks:
 #  elk-network:
 #    driver: bridge
    pg-network:
+     driver: bridge
+   mysql-network:
      driver: bridge
