@@ -21,46 +21,66 @@ services:
     networks:
       - mysql-network
 
-  #  elasticsearch:
-#     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
-#     container_name: elasticsearch
-#     environment:
-#       - discovery.type=single-node
-#     ports:
-#       - 9200:9200
-#       - 9300:9300
-#     volumes:
-#       - esdata:/usr/share/elasticsearch/data
-#     networks:
-#       - elk-network
-#
-#  logstash:
-#     image: docker.elastic.co/logstash/logstash:7.17.0
-#     container_name: logstash
-#     volumes:
-#       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-#     ports:
-#       - 9600:9600
-#     depends_on:
-#       - elasticsearch
-#     networks:
-#       - elk-network
-#
-#  kibana:
-#     image: docker.elastic.co/kibana/kibana:7.17.0
-#     container_name: kibana
-#     ports:
-#       - 5601:5601
-#     depends_on:
-#       - logstash
-#     networks:
-#       - elk-network
+  elasticsearch:
+     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+     container_name: elasticsearch
+     environment:
+       - discovery.type=single-node
+     ports:
+       - 9200:9200
+       - 9300:9300
+     volumes:
+       - esdata:/usr/share/elasticsearch/data
+     networks:
+       - elk-network
+
+  logstash:
+     image: docker.elastic.co/logstash/logstash:7.17.0
+     container_name: logstash
+     volumes:
+       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+     ports:
+       - "5000:5000"
+     depends_on:
+       - elasticsearch
+     networks:
+       - elk-network
+
+  kibana:
+     image: docker.elastic.co/kibana/kibana:7.17.0
+     container_name: kibana
+     ports:
+       - 5601:5601
+     depends_on:
+       - elasticsearch
+       - logstash
+     networks:
+       - elk-network
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.0
+    container_name: filebeat
+    entrypoint: "filebeat -e -strict.perms=false"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./filebeat.yaml:/usr/share/filebeat/filebeat.yml
+    environment:
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk-network
+
 
   department-service:
     container_name: department-service
     image: mettukiran070/department-service:1.0.0
     depends_on:
       - mysql
+#    logging:
+#      driver: gelf
+#      options:
+#        gelf-address: "udp://logstash:12201"
     command:
       - "java"
       - "-jar"
@@ -71,12 +91,17 @@ services:
     networks:
       - pg-network
       - mysql-network
+      - elk-network
 
   employee-service:
     container_name: employee-service
     image: mettukiran070/employee-service:1.0.0
     depends_on:
       - mysql
+#    logging:
+#      driver: gelf
+#      options:
+#        gelf-address: "udp://logstash:12201"
     command:
       - "java"
       - "-jar"
@@ -87,6 +112,7 @@ services:
     networks:
       - pg-network
       - mysql-network
+      - elk-network
 
   prometheus:
      image: prom/prometheus:latest
@@ -108,17 +134,19 @@ services:
        - 3000:3000
      networks:
        - pg-network
+
 volumes:
   mysql-vol:
     driver: local
-  # esdata:
-  #   driver: local
+  esdata:
+    driver: local
   prometheus_data:
      driver: local
 networks:
-#  elk-network:
-#    driver: bridge
-   pg-network:
-     driver: bridge
-   mysql-network:
-     driver: bridge
+  elk-network:
+    driver: bridge
+  pg-network:
+    driver: bridge
+  mysql-network:
+    driver: bridge
+
