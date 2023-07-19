@@ -23,24 +23,28 @@ public class EmployeeController {
 
     @PostMapping("/employees")
     public ResponseEntity<Employee> save(@RequestBody Employee employee) {
+        log.info("Recieved request for employee creation {}", employee);
         Employee response = employeeService.save(employee);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/employees")
     public ResponseEntity<List<Employee>> list(Pageable page) {
+        log.info("Requested to list all employees {}", page);
         List<Employee> response = employeeService.list(page);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/employees/{id}")
     public ResponseEntity<Employee> getById(@PathVariable Long id) {
+        log.info("Requested to get Employee by id {}", id);
         Employee response = employeeService.getById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/employees")
     public ResponseEntity<Employee> update(@RequestBody Employee employee) {
+        log.info("Requested to update the employee {}", employee);
         employeeService.getById(employee.id());
         Employee response = employeeService.update(employee);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -48,6 +52,7 @@ public class EmployeeController {
 
     @DeleteMapping("/employees/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
+        log.info("Requested to delete the employee by id {}", id);
         employeeService.getById(id);
         employeeService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
