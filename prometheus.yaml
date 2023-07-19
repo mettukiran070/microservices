@@ -6,3 +6,10 @@ scrape_configs:
       - targets: ['department-service:8080']
         labels:
           application: 'department-service'
+  - job_name: 'employee-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: ['employee-service:8081']
+        labels:
+          application: 'employee-service'
