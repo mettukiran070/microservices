@@ -58,8 +58,7 @@ services:
 
   department-service:
     container_name: department-service
-    image: department-service:latest
-    pull_policy: never
+    image: mettukiran070/department-service:1.0.0
     depends_on:
       - mysql
     command:
@@ -73,6 +72,21 @@ services:
       - pg-network
       - mysql-network
 
+  employee-service:
+    container_name: employee-service
+    image: mettukiran070/employee-service:1.0.0
+    depends_on:
+      - mysql
+    command:
+      - "java"
+      - "-jar"
+      - "/app.jar"
+      - "--spring.datasource.url=jdbc:mysql://mysql:3306/test"
+    ports:
+      - 8081:8081
+    networks:
+      - pg-network
+      - mysql-network
 
   prometheus:
      image: prom/prometheus:latest
