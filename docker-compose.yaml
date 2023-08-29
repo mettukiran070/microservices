@@ -1,5 +1,5 @@
 # mysql: https://medium.com/@hamzaak/dockerize-mysql-with-docker-compose-4f1f789296e9
-# elk: https://www.bogotobogo.com/DevOps/Docker/Docker_ELK_7_6_Elastic_Stack_Docker_Compose.php
+# elk: https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
 # promotheus & grafanna : https://github.com/weder96/SpringBootActuatorPrometheus.git
 
 version: "3.8"
@@ -21,98 +21,41 @@ services:
     networks:
       - mysql-network
 
-  elasticsearch:
-     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
-     container_name: elasticsearch
-     environment:
-       - discovery.type=single-node
-     ports:
-       - 9200:9200
-       - 9300:9300
-     volumes:
-       - esdata:/usr/share/elasticsearch/data
-     networks:
-       - elk-network
-
-  logstash:
-     image: docker.elastic.co/logstash/logstash:7.17.0
-     container_name: logstash
-     volumes:
-       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-     ports:
-       - "5000:5000"
-     depends_on:
-       - elasticsearch
-     networks:
-       - elk-network
-
-  kibana:
-     image: docker.elastic.co/kibana/kibana:7.17.0
-     container_name: kibana
-     ports:
-       - 5601:5601
-     depends_on:
-       - elasticsearch
-       - logstash
-     networks:
-       - elk-network
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.17.0
-    container_name: filebeat
-    entrypoint: "filebeat -e -strict.perms=false"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./filebeat.yaml:/usr/share/filebeat/filebeat.yml
-    environment:
-      - output.elasticsearch.hosts=["elasticsearch:9200"]
-    depends_on:
-      - elasticsearch
-    networks:
-      - elk-network
-
-
   department-service:
     container_name: department-service
     image: mettukiran070/department-service:1.0.0
     depends_on:
       - mysql
-#    logging:
-#      driver: gelf
-#      options:
-#        gelf-address: "udp://logstash:12201"
     command:
       - "java"
       - "-jar"
       - "/app.jar"
       - "--spring.datasource.url=jdbc:mysql://mysql:3306/test"
+      - "--spring.datasource.username=root"
+      - "--spring.datasource.password=mysqlrootpass"
     ports:
       - 8080:8080
     networks:
       - pg-network
       - mysql-network
-      - elk-network
 
   employee-service:
     container_name: employee-service
     image: mettukiran070/employee-service:1.0.0
     depends_on:
       - mysql
-#    logging:
-#      driver: gelf
-#      options:
-#        gelf-address: "udp://logstash:12201"
     command:
       - "java"
       - "-jar"
       - "/app.jar"
       - "--spring.datasource.url=jdbc:mysql://mysql:3306/test"
+      - "--spring.datasource.username=root"
+      - "--spring.datasource.password=mysqlrootpass"
     ports:
       - 8081:8081
     networks:
       - pg-network
       - mysql-network
-      - elk-network
 
   prometheus:
      image: prom/prometheus:latest
@@ -135,16 +78,48 @@ services:
      networks:
        - pg-network
 
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:7.17.0"
+    container_name: elasticsearch
+    depends_on:
+      - department-service
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "discovery.type=single-node"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:7.17.0"
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: "docker.elastic.co/beats/filebeat:7.17.0"
+    container_name: filebeat
+    user: root
+    command: filebeat -e -strict.perms=false
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
-  mysql-vol:
-    driver: local
   esdata:
+    driver: local
+  mysql-vol:
     driver: local
   prometheus_data:
      driver: local
 networks:
-  elk-network:
-    driver: bridge
   pg-network:
     driver: bridge
   mysql-network:
