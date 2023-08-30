@@ -2,7 +2,7 @@
 # elk: https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
 # promotheus & grafanna : https://github.com/weder96/SpringBootActuatorPrometheus.git
 
-version: "3.8"
+version: "3.2"
 services:
   mysql:
     container_name: mysql
@@ -12,6 +12,7 @@ services:
       MYSQL_USER: "mysqluser"
       MYSQL_PASSWORD: "mysqlpass"
       MYSQL_ROOT_PASSWORD: "mysqlrootpass"
+      MYSQL_DATABASE: "test"
     ports:
       - '3306:3306'
     expose:
