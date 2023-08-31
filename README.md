@@ -1,6 +1,15 @@
 # microservices
 Developed microservices using the Java Spring boot
 
+## Setup ELK stack with filebeat
+1. docker-compose up
+2. login to kibana (http://localhost:5601/)
+3. click in 3 lines left, go to management and select stack management
+4. under kibana select index patterns, select create index pattern
+5. give name as (filebeat-*) and select timestamp and click on create index pattern
+6. click on 3 lines button on left and under analysis select discover
+7. we can see log analysis there
+
 ## Setup Prometheus & Grafana
 1. docker-compose up
 2. Check whether the endpoints are working or not Prometheus(http://localhost:9090/) & Grafana(http://localhost:3000/)
