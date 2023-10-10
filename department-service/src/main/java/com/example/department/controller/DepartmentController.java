@@ -1,6 +1,7 @@
 package com.example.department.controller;
 
 import com.example.department.dto.Department;
+import com.example.department.dto.DepartmentEmployee;
 import com.example.department.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -56,5 +57,13 @@ public class DepartmentController {
         departmentService.getById(id);
         departmentService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/departments/{id}/employees")
+    public ResponseEntity<DepartmentEmployee> getEmployessByDepartmentId(@PathVariable(name = "id", required = true) Long id) {
+        log.info("Requested to list employees by department id {}", id);
+        departmentService.getById(id);
+        DepartmentEmployee response = departmentService.getAllEmployeesByDepartmentId(id);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }

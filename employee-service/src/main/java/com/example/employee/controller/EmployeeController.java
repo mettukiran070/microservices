@@ -1,6 +1,7 @@
 package com.example.employee.controller;
 
 import com.example.employee.dto.Employee;
+import com.example.employee.dto.EmployeeCriteria;
 import com.example.employee.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +30,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> list(Pageable page) {
-        log.info("Requested to list all employees {}", page);
-        List<Employee> response = employeeService.list(page);
+    public ResponseEntity<List<Employee>> list(EmployeeCriteria criteria, Pageable page) {
+        log.info("Requested to list all employees {}, {}", criteria, page);
+        List<Employee> response = employeeService.list(criteria, page);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

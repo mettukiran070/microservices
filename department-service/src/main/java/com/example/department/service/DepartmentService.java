@@ -1,10 +1,16 @@
 package com.example.department.service;
 
+import com.example.department.client.EmployeeClient;
 import com.example.department.dto.Department;
+import com.example.department.dto.DepartmentEmployee;
+import com.example.department.dto.Employee;
+import com.example.department.dto.EmployeeCriteria;
 import com.example.department.exceptions.DepartmentNotFoundException;
 import com.example.department.repository.DepartmentRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,6 +21,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
+    @Autowired
+    private EmployeeClient employeeClient;
 
     public DepartmentService(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
@@ -45,6 +53,12 @@ public class DepartmentService {
 
     public void delete(Long id) {
         departmentRepository.deleteById(id);
+    }
+
+    public DepartmentEmployee getAllEmployeesByDepartmentId(Long id) {
+        Department department = this.getById(id);
+        ResponseEntity<List<Employee>> employeeResponse = this.employeeClient.getEmployeesByDepartmentId(EmployeeCriteria.builder().departmentNumber(id).build());
+        return new DepartmentEmployee(department, employeeResponse.getBody());
     }
 
     private com.example.department.models.Department convertDtoToEntity(Department department) {

@@ -1,6 +1,7 @@
 package com.example.employee.service;
 
 import com.example.employee.dto.Employee;
+import com.example.employee.dto.EmployeeCriteria;
 import com.example.employee.exceptions.EmployeeNotFoundException;
 import com.example.employee.repository.EmployeeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,14 @@ public class EmployeeService {
         return convertEntityToDto(savedEmployee);
     }
 
-    public List<Employee> list(Pageable page) {
-        return employeeRepository.findAll(page)
-                .stream()
+    public List<Employee> list(EmployeeCriteria criteria, Pageable page) {
+        if (!(criteria != null && criteria.getDepartmentNumber() != null && criteria.getDepartmentNumber() > 1)) {
+            return employeeRepository.findAll(page)
+                    .stream()
+                    .map(employee -> convertEntityToDto(employee))
+                    .collect(Collectors.toList());
+        }
+        return employeeRepository.findByDepartmentNumber(criteria.getDepartmentNumber(), page).stream()
                 .map(employee -> convertEntityToDto(employee))
                 .collect(Collectors.toList());
     }
