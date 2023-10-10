@@ -1,6 +1,7 @@
 # mysql: https://medium.com/@hamzaak/dockerize-mysql-with-docker-compose-4f1f789296e9
 # elk: https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
 # promotheus & grafanna : https://github.com/weder96/SpringBootActuatorPrometheus.git
+# https://bigbear.ai/blog/solution-for-distributed-tracing-with-spring-boot-and-elk/  --> To implement the distributed tracing using elk
 
 version: "3.8"
 services:
