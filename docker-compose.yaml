@@ -2,6 +2,7 @@
 # elk: https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
 # promotheus & grafanna : https://github.com/weder96/SpringBootActuatorPrometheus.git
 # https://bigbear.ai/blog/solution-for-distributed-tracing-with-spring-boot-and-elk/  --> To implement the distributed tracing using elk
+# polyglot microservices --> https://medium.com/@venkatasamy.rajkumar/distributed-tracing-in-polyglot-microservices-448ae38619e4
 
 version: "3.8"
 services:
