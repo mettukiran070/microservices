@@ -6,80 +6,60 @@ import com.example.department.dto.DepartmentEmployee;
 import com.example.department.dto.Employee;
 import com.example.department.dto.EmployeeCriteria;
 import com.example.department.exceptions.DepartmentNotFoundException;
+import com.example.department.mapper.DepartmentMapper;
 import com.example.department.repository.DepartmentRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class DepartmentService {
-    private final DepartmentRepository departmentRepository;
-    @Autowired
-    private EmployeeClient employeeClient;
 
-    public DepartmentService(DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
-    }
+  private final DepartmentRepository departmentRepository;
+  private final DepartmentMapper departmentMapper;
+  @Autowired
+  private final EmployeeClient employeeClient;
 
-    public Department save(Department department) {
-        com.example.department.models.Department departmentObj = convertDtoToEntity(department);
-        com.example.department.models.Department savedDepartment = departmentRepository.save(departmentObj);
-        return convertEntityToDto(savedDepartment);
-    }
+  public Department save(Department department) {
+    com.example.department.models.Department departmentObj = departmentMapper.mapDTOToEntity(
+        department);
+    com.example.department.models.Department savedDepartment = departmentRepository.save(
+        departmentObj);
+    return departmentMapper.mapEntityToDTO(savedDepartment);
+  }
 
-    public List<Department> list(Pageable page) {
-        return departmentRepository.findAll(page)
-                .stream()
-                .map(department -> convertEntityToDto(department))
-                .collect(Collectors.toList());
-    }
+  public List<Department> list(Pageable page) {
+    return departmentRepository.findAll(page)
+        .stream()
+        .map(departmentMapper::mapEntityToDTO)
+        .collect(Collectors.toList());
+  }
 
-    public Department getById(Long id) {
-        return departmentRepository.findById(id)
-                .map(department -> convertEntityToDto(department))
-                .orElseThrow(() -> new DepartmentNotFoundException("Department Not Found with " + id));
-    }
+  public Department getById(Long id) {
+    return departmentRepository.findById(id)
+        .map(departmentMapper::mapEntityToDTO)
+        .orElseThrow(() -> new DepartmentNotFoundException("Department Not Found with " + id));
+  }
 
-    public Department update(Department department) {
-        return save(department);
-    }
+  public Department update(Department department) {
+    return save(department);
+  }
 
-    public void delete(Long id) {
-        departmentRepository.deleteById(id);
-    }
+  public void delete(Long id) {
+    departmentRepository.deleteById(id);
+  }
 
-    public DepartmentEmployee getAllEmployeesByDepartmentId(Long id) {
-        Department department = this.getById(id);
-        ResponseEntity<List<Employee>> employeeResponse = this.employeeClient.getEmployeesByDepartmentId(EmployeeCriteria.builder().departmentNumber(id).build());
-        return new DepartmentEmployee(department, employeeResponse.getBody());
-    }
-
-    private com.example.department.models.Department convertDtoToEntity(Department department) {
-        com.example.department.models.Department.DepartmentBuilder builder = com.example.department.models.Department.builder()
-                .name(department.name())
-                .email(department.email())
-                .phoneNumber(department.phoneNumber())
-                .createdAt(new Date());
-        if (department.id() != null) {
-            builder.id(department.id()).createdAt(department.createdAt());
-        }
-        return builder.build();
-    }
-
-    private Department convertEntityToDto(com.example.department.models.Department department) {
-        return new Department(
-                department.getId(),
-                department.getName(),
-                department.getEmail(),
-                department.getPhoneNumber(),
-                department.getCreatedAt()
-        );
-    }
+  public DepartmentEmployee getAllEmployeesByDepartmentId(Long id) {
+    Department department = this.getById(id);
+    ResponseEntity<List<Employee>> employeeResponse = this.employeeClient.getEmployeesByDepartmentId(
+        EmployeeCriteria.builder().departmentNumber(id).build());
+    return new DepartmentEmployee(department, employeeResponse.getBody());
+  }
 }
