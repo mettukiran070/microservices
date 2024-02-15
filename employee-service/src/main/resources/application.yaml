@@ -18,6 +18,11 @@ spring:
       ddl-auto: update
     show-sql: false
 
+springdoc:
+  swagger-ui:
+    enabled: true
+  show-actuator: true  # To show the actuator endpoints in Swagger spec
+
 management:
   endpoints:
     web:
